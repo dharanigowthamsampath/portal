@@ -1,8 +1,5 @@
-// app/api/snippets/route.ts
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
   try {
@@ -17,7 +14,8 @@ export async function POST(req: Request) {
       },
     });
     return NextResponse.json(snippet);
-  } catch (error) {
+  } catch (err) {
+    console.error("Error creating snippet:", err);
     return NextResponse.json(
       { error: "Failed to create snippet" },
       { status: 500 }
@@ -25,7 +23,7 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     const snippets = await prisma.codeSnippet.findMany({
       where: {
@@ -38,7 +36,8 @@ export async function GET(req: Request) {
       take: 10,
     });
     return NextResponse.json(snippets);
-  } catch (error) {
+  } catch (err) {
+    console.error("Error fetching snippets:", err);
     return NextResponse.json(
       { error: "Failed to fetch snippets" },
       { status: 500 }

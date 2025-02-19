@@ -29,7 +29,6 @@ export default function SnippetPage({
 }: {
   params: Promise<PageParams>;
 }) {
-  // Unwrap the params using React.use()
   const resolvedParams = use(params);
   const [snippet, setSnippet] = useState<Snippet | null>(null);
   const [loading, setLoading] = useState(true);
@@ -47,9 +46,9 @@ export default function SnippetPage({
         }
         const data = await response.json();
         setSnippet(data);
-      } catch (error) {
+      } catch (err) {
         setError("Failed to load snippet");
-        console.error("Error fetching snippet:", error);
+        console.error("Error fetching snippet:", err);
       } finally {
         setLoading(false);
       }
@@ -68,7 +67,8 @@ export default function SnippetPage({
           title: "Copied to clipboard",
           description: "The code has been copied to your clipboard.",
         });
-      } catch (error) {
+      } catch (err) {
+        console.error("Error copying to clipboard:", err);
         toast({
           title: "Failed to copy",
           description: "Could not copy code to clipboard.",
@@ -85,7 +85,8 @@ export default function SnippetPage({
         title: "Link copied",
         description: "The snippet URL has been copied to your clipboard.",
       });
-    } catch (error) {
+    } catch (err) {
+      console.error("Error copying link:", err);
       toast({
         title: "Failed to copy",
         description: "Could not copy link to clipboard.",
