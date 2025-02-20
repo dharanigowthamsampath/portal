@@ -23,8 +23,12 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const url = new URL(req.url);
+    const page = parseInt(url.searchParams.get("page") || "1");
+    const limit = parseInt(url.searchParams.get("limit") || "5");
+
     const snippets = await prisma.codeSnippet.findMany({
       where: {
         isPublic: true,
@@ -33,9 +37,23 @@ export async function GET() {
       orderBy: {
         createdAt: "desc",
       },
-      take: 25,
+      skip: (page - 1) * limit, // Skip previous pages
+      take: limit, // Limit the number of results per page
     });
-    return NextResponse.json(snippets);
+
+    // Fetch total count of snippets for pagination controls
+    const totalCount = await prisma.codeSnippet.count({
+      where: {
+        isPublic: true,
+        OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+      },
+    });
+
+    return NextResponse.json({
+      snippets,
+      totalCount,
+      totalPages: Math.ceil(totalCount / limit), // Calculate total pages
+    });
   } catch (err) {
     console.error("Error fetching snippets:", err);
     return NextResponse.json(

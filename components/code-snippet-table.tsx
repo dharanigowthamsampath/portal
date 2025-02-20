@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Table,
@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { formatDistanceToNow } from "date-fns";
-import { useState, useEffect } from "react";
 
 interface CodeSnippet {
   id: string;
@@ -28,14 +27,21 @@ const CodeSnippetsTable = () => {
   const router = useRouter();
   const [snippets, setSnippets] = useState<CodeSnippet[]>([]);
   const [loading, setLoading] = useState(true);
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [paginationLoading, setPaginationLoading] = useState(false);
 
   useEffect(() => {
     const fetchSnippets = async () => {
       try {
-        const response = await fetch("/api/snippets");
+        setLoading(true);
+        const response = await fetch(
+          `/api/snippets?page=${currentPage}&limit=13`
+        );
         if (response.ok) {
           const data = await response.json();
-          setSnippets(data);
+          setSnippets(data.snippets);
+          setTotalPages(data.totalPages);
         }
       } catch (error) {
         console.error("Failed to fetch snippets:", error);
@@ -45,14 +51,30 @@ const CodeSnippetsTable = () => {
     };
 
     fetchSnippets();
-  }, []);
+  }, [currentPage]);
 
   const handleViewSnippet = (id: string) => {
     router.push(`/snippet/${id}`);
   };
 
+  const handlePageChange = (newPage: number) => {
+    setPaginationLoading(true); // Show loader when pagination changes
+    setCurrentPage(newPage);
+  };
+
+  useEffect(() => {
+    if (currentPage !== 1) {
+      setPaginationLoading(false); // Hide loader when new data is loaded
+    }
+  }, [snippets]);
+
   if (loading) {
-    return <div className="text-center py-4">Loading snippets...</div>;
+    return (
+      <div className="flex justify-center items-center h-[400px]">
+        {/* Loader for data loading */}
+        <div className="animate-spin rounded-full border-4 border-t-transparent border-gray-600 w-8 h-8"></div>
+      </div>
+    );
   }
 
   return (
@@ -111,6 +133,34 @@ const CodeSnippetsTable = () => {
             )}
           </TableBody>
         </Table>
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center mt-4 space-x-4 items-center">
+        <Button
+          variant="default"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+
+        {/* Centered pagination text */}
+        <span className="text-center">
+          Page {currentPage} of {totalPages}
+        </span>
+
+        {paginationLoading ? (
+          <div className="animate-spin rounded-full border-4 border-t-transparent border-gray-600 w-6 h-6"></div>
+        ) : (
+          <Button
+            variant="default"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </Button>
+        )}
       </div>
     </div>
   );
