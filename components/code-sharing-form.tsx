@@ -133,14 +133,14 @@ const CodeSharingForm = () => {
                 <SelectItem value="sql">SQL</SelectItem>
               </SelectContent>
             </Select>
-
+            {/* 
             <Button
               type="button"
               variant={formData.isPublic ? "default" : "outline"}
               onClick={() => handleInputChange("isPublic", !formData.isPublic)}
             >
               {formData.isPublic ? "Public" : "Private"}
-            </Button>
+            </Button> */}
           </div>
 
           <Button type="submit" className="w-full" disabled={isSubmitting}>

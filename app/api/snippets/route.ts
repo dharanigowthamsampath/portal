@@ -3,14 +3,14 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
   try {
-    const { title, code, language, expiresAt, isPublic } = await req.json();
+    const { title, code, language, expiresAt } = await req.json();
     const snippet = await prisma.codeSnippet.create({
       data: {
         title,
         code,
         language,
         expiresAt: expiresAt ? new Date(expiresAt) : null,
-        isPublic,
+        isPublic: false,
       },
     });
     return NextResponse.json(snippet);
