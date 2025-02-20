@@ -33,6 +33,8 @@ export default function SnippetPage({
   const [snippet, setSnippet] = useState<Snippet | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isCopied, setIsCopied] = useState(false); // State for code copy status
+  const [isLinkCopied, setIsLinkCopied] = useState(false); // State for URL copy status
   const { toast } = useToast();
 
   useEffect(() => {
@@ -63,10 +65,14 @@ export default function SnippetPage({
     if (snippet?.code) {
       try {
         await navigator.clipboard.writeText(snippet.code);
+        setIsCopied(true); // Set the state to true when copied
         toast({
           title: "Copied to clipboard",
           description: "The code has been copied to your clipboard.",
         });
+
+        // Reset the copied status after 2 seconds
+        setTimeout(() => setIsCopied(false), 2000);
       } catch (err) {
         console.error("Error copying to clipboard:", err);
         toast({
@@ -80,11 +86,16 @@ export default function SnippetPage({
 
   const handleShare = async () => {
     try {
+      // Copy the current URL to the clipboard
       await navigator.clipboard.writeText(window.location.href);
+      setIsLinkCopied(true); // Set the state to true when the URL is copied
       toast({
-        title: "Link copied",
+        title: "URL copied",
         description: "The snippet URL has been copied to your clipboard.",
       });
+
+      // Reset the link copied status after 2 seconds
+      setTimeout(() => setIsLinkCopied(false), 2000);
     } catch (err) {
       console.error("Error copying link:", err);
       toast({
@@ -161,7 +172,8 @@ export default function SnippetPage({
                 className="h-8"
               >
                 <Copy className="h-4 w-4 mr-2" />
-                Copy
+                {isCopied ? "Copied!" : "Copy"}{" "}
+                {/* Dynamically change the text */}
               </Button>
               <Button
                 variant="secondary"
@@ -170,7 +182,8 @@ export default function SnippetPage({
                 className="h-8"
               >
                 <Share2 className="h-4 w-4 mr-2" />
-                Share
+                {isLinkCopied ? "URL Copied!" : "Share"}{" "}
+                {/* Dynamically change the text */}
               </Button>
             </div>
           </div>
