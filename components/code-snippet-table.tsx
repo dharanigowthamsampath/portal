@@ -76,8 +76,12 @@ const CodeSnippetsTable = () => {
                 onClick={() => handleViewSnippet(snippet.id)}
               >
                 <TableCell className="font-medium">
-                  {snippet.title || "Untitled"}
+                  {snippet.title
+                    ? snippet.title.split(" ").slice(0, 15).join(" ") +
+                      (snippet.title.split(" ").length > 15 ? "..." : "")
+                    : "Untitled"}
                 </TableCell>
+
                 <TableCell>{snippet.language}</TableCell>
                 <TableCell>
                   {formatDistanceToNow(new Date(snippet.createdAt), {

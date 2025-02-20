@@ -102,7 +102,7 @@ const AdminSnippetsTable = () => {
               <TableHead>Title</TableHead>
               <TableHead>Language</TableHead>
               <TableHead>Created</TableHead>
-              <TableHead>Created By</TableHead>
+              {/* <TableHead>Created By</TableHead> */}
               <TableHead className="text-right">Views</TableHead>
               <TableHead className="text-center">Approved</TableHead>
               <TableHead className="text-right">Actions</TableHead>
@@ -116,15 +116,19 @@ const AdminSnippetsTable = () => {
                 onClick={() => handleViewSnippet(snippet.id)}
               >
                 <TableCell className="font-medium">
-                  {snippet.title || "Untitled"}
+                  {snippet.title
+                    ? snippet.title.split(" ").slice(0, 15).join(" ") +
+                      (snippet.title.split(" ").length > 15 ? "..." : "")
+                    : "Untitled"}
                 </TableCell>
+
                 <TableCell>{snippet.language}</TableCell>
                 <TableCell>
                   {formatDistanceToNow(new Date(snippet.createdAt), {
                     addSuffix: true,
                   })}
                 </TableCell>
-                <TableCell>{snippet.createdBy}</TableCell>
+                {/* <TableCell>{snippet.createdBy}</TableCell> */}
                 <TableCell className="text-right">{snippet.views}</TableCell>
                 <TableCell className="text-center">
                   {snippet.isPublic ? (
@@ -134,44 +138,46 @@ const AdminSnippetsTable = () => {
                   )}
                 </TableCell>
                 <TableCell className="text-right space-x-2">
-                  <Button
-                    variant="ghost"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleViewSnippet(snippet.id);
-                    }}
-                  >
-                    View
-                  </Button>
-                  {!snippet.isPublic && (
+                  <div className="flex justify-end space-x-2">
                     <Button
-                      variant="default"
+                      variant="ghost"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleApprove(snippet.id);
+                        handleViewSnippet(snippet.id);
                       }}
                     >
-                      Approve
+                      View
                     </Button>
-                  )}
-                  <Button
-                    variant="destructive"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(snippet.id);
-                    }}
-                  >
-                    Delete
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleEdit(snippet.id);
-                    }}
-                  >
-                    Edit
-                  </Button>
+                    {!snippet.isPublic && (
+                      <Button
+                        variant="default"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleApprove(snippet.id);
+                        }}
+                      >
+                        Approve
+                      </Button>
+                    )}
+                    <Button
+                      variant="destructive"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(snippet.id);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEdit(snippet.id);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

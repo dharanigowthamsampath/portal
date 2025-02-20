@@ -123,11 +123,13 @@ const CodeSharingForm = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="plain">Plain Text</SelectItem>
+                <SelectItem value="c">C</SelectItem>
+                <SelectItem value="cpp">C++</SelectItem>
                 <SelectItem value="javascript">JavaScript</SelectItem>
                 <SelectItem value="typescript">TypeScript</SelectItem>
                 <SelectItem value="python">Python</SelectItem>
                 <SelectItem value="java">Java</SelectItem>
-                <SelectItem value="cpp">C++</SelectItem>
+
                 <SelectItem value="html">HTML</SelectItem>
                 <SelectItem value="css">CSS</SelectItem>
                 <SelectItem value="sql">SQL</SelectItem>
